@@ -472,6 +472,11 @@ func GetRuntimeDirectory(targetUser *user.User) (string, error) {
 		runtimeDirectory = os.Getenv("XDG_RUNTIME_DIR")
 	}
 
+	if runtimeDirectory == "" {
+		err := fmt.Errorf("failed to get runtime directory. Please check $XDG_RUNTIME_DIR variable")
+		return "", err
+	}
+
 	toolboxRuntimeDirectory := path.Join(runtimeDirectory, "toolbox")
 	logrus.Debugf("Creating runtime directory %s", toolboxRuntimeDirectory)
 
@@ -489,7 +494,7 @@ func GetRuntimeDirectory(targetUser *user.User) (string, error) {
 		return "", wrapped_err
 	}
 
-	return toolboxRuntimeDirectory, nil
+	return runtimeDirectory, nil
 }
 
 // HumanDuration accepts a Unix time value and converts it into a human readable

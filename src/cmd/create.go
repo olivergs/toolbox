@@ -212,17 +212,14 @@ func createContainer(container, image, release string, showCommandToEnter bool) 
 	var runtimeDirectory string
 	var xdgRuntimeDirEnv []string
 
-	if currentUser.Uid == "0" {
-		runtimeDirectory, err = utils.GetRuntimeDirectory(currentUser)
-		if err != nil {
-			return err
-		}
-	} else {
-		xdgRuntimeDir := os.Getenv("XDG_RUNTIME_DIR")
-		xdgRuntimeDirEnvArg := "XDG_RUNTIME_DIR=" + xdgRuntimeDir
-		xdgRuntimeDirEnv = []string{"--env", xdgRuntimeDirEnvArg}
+	runtimeDirectory, err = utils.GetRuntimeDirectory(currentUser)
+	if err != nil {
+		return err
+	}
 
-		runtimeDirectory = xdgRuntimeDir
+	if currentUser.Uid != "0" {
+		xdgRuntimeDirEnvArg := "XDG_RUNTIME_DIR=" + runtimeDirectory
+		xdgRuntimeDirEnv = []string{"--env", xdgRuntimeDirEnvArg}
 	}
 
 	runtimeDirectoryMountArg := runtimeDirectory + ":" + runtimeDirectory
